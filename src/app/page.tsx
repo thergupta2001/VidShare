@@ -1,11 +1,11 @@
 "use client";
 
 import { trpc } from "@/server/client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
 
 export default function Home() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const getUsers = trpc.user.getUsers.useQuery();
   const addUsers = trpc.user.addUsers.useMutation({
     onSettled: () => {
@@ -14,6 +14,12 @@ export default function Home() {
   });
 
   const [email, setEmail] = useState<string>("");
+
+  useEffect(() => {
+    if (status === "authenticated" && !session?.user) {
+      console.log("Authenticated but user object not loaded:", session);
+    }
+  }, [status, session]);
 
   if (!session) {
     return (
@@ -28,16 +34,16 @@ export default function Home() {
     <div className="flex min-h-screen flex-col items-center justify-between p-24">
       Signed in as {session.user?.email} <br />
       <button onClick={() => signOut()}>Sign out</button>
-      {JSON.stringify(getUsers.data)}
+      {/* {JSON.stringify(getUsers.data)} */}
       <p>Hello</p>
       <input
         type="text"
         onChange={(e) => setEmail(e.target.value)}
         value={email}
       />
-      <button onClick={() => addUsers.mutate({ email })}>
+      {/* <button onClick={() => addUsers.mutate({ email })}>
         Submit
-      </button>
+      </button> */}
     </div>
   );
 }

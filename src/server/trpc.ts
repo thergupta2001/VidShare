@@ -2,9 +2,9 @@ import { initTRPC, TRPCError } from "@trpc/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
-export const createContext = async (opts: { req: Request; res: Response }) => {
+export const createContext = async ({ req }: { req: any }) => {
     const session = await getServerSession(authOptions);
-    return { session };
+    return { req, session };
 };
 
 const t = initTRPC.context<typeof createContext>().create();
