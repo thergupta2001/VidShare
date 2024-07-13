@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
 import { trpc } from "@/server/client";
 import { useState } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
 
 export default function Home() {
-  const { data : session } = useSession();
+  const { data: session } = useSession();
   const getUsers = trpc.user.getUsers.useQuery();
   const addUsers = trpc.user.addUsers.useMutation({
     onSettled: () => {
@@ -30,8 +30,14 @@ export default function Home() {
       <button onClick={() => signOut()}>Sign out</button>
       {JSON.stringify(getUsers.data)}
       <p>Hello</p>
-      <input type="text" onChange={(e) => setEmail(e.target.value)} value={email} />
-      <button onClick={() => { addUsers.mutate({email}) }}>Submit</button>
+      <input
+        type="text"
+        onChange={(e) => setEmail(e.target.value)}
+        value={email}
+      />
+      <button onClick={() => addUsers.mutate({ email })}>
+        Submit
+      </button>
     </div>
   );
 }
