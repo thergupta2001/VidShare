@@ -3,8 +3,12 @@
 import { trpc } from "@/server/client";
 import { useEffect, useState } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
+import { useRecoilState } from "recoil";
+import { increaseAtom } from "./utils/store";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const router = useRouter();
   const { data: session, status } = useSession();
   const getUsers = trpc.user.getUsers.useQuery();
   const addUsers = trpc.user.addUsers.useMutation({
@@ -14,6 +18,7 @@ export default function Home() {
   });
 
   const [email, setEmail] = useState<string>("");
+  const [count, setCount] = useRecoilState(increaseAtom);
 
   useEffect(() => {
     if (status === "authenticated" && !session?.user) {
@@ -35,12 +40,15 @@ export default function Home() {
       Signed in as {session.user?.email} <br />
       <button onClick={() => signOut()}>Sign out</button>
       {/* {JSON.stringify(getUsers.data)} */}
-      <p>Hello</p>
+      <p onClick={() => { setCount(count + 1) }}>Hello {count}</p>
       <input
         type="text"
         onChange={(e) => setEmail(e.target.value)}
         value={email}
       />
+      <button onClick={() => { router.replace("/test") }}>
+        Test Page
+      </button>
       {/* <button onClick={() => addUsers.mutate({ email })}>
         Submit
       </button> */}

@@ -1,12 +1,13 @@
 import { z } from "zod";
-import { publicProcedure as procedure, router } from "../trpc";
+import { publicProcedure, router } from "../trpc";
 import prisma from "../../../prisma/db";
 
 export const userRouter = router({
-    getUsers: procedure.query(async () => {
+    getUsers: publicProcedure.query(async () => {
         return await prisma.user.findMany();
     }),
-    addUsers: procedure.input(z.object({ email: z.string() }))
+    
+    addUsers: publicProcedure.input(z.object({ email: z.string() }))
     .mutation(async (opts) => {
         const { input } = opts;
         await prisma.user.create({
