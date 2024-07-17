@@ -15,22 +15,32 @@ const config: Config = {
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
+      transitionProperty: {
+        'height': 'height',
+        'spacing': 'margin, padding',
+      },
+      transitionDuration: {
+        '2000': '2000ms',
+      },
+      transitionTimingFunction: {
+        'bounce-in-out': 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+      },
     },
   },
-  darkmode: "class",
+  darkMode: "class",
   plugins: [
     nextui({
       layout: {
-        disabledOpacity: "0.3", // opacity-[0.3]
+        disabledOpacity: "0.3",
         radius: {
-          small: "4px", // rounded-small
-          medium: "6px", // rounded-medium
-          large: "8px", // rounded-large
+          small: "4px",
+          medium: "6px",
+          large: "8px",
         },
         borderWidth: {
-          small: "1px", // border-small
-          medium: "1px", // border-medium
-          large: "2px", // border-large
+          small: "1px",
+          medium: "1px",
+          large: "2px",
         },
       },
       themes: {
@@ -38,7 +48,6 @@ const config: Config = {
           colors: {
             primary: {
               DEFAULT: "#FF6700",
-              foreground: "#00EFSD",
             },
             focus: "#BEF264",
           },

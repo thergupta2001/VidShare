@@ -2,11 +2,12 @@
 
 import { trpc } from "@/server/client";
 import { useEffect, useState } from "react";
-import { useSession, signIn, signOut } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { useRecoilState } from "recoil";
 import { increaseAtom } from "./utils/store";
 import { useRouter } from "next/navigation";
 import { Button } from "@nextui-org/react";
+import Login from "@/components/Login";
 
 export default function Home() {
   const router = useRouter();
@@ -29,10 +30,7 @@ export default function Home() {
 
   if (!session) {
     return (
-      <div>
-        Not signed in <br />
-        <button onClick={() => signIn()}>Sign in</button>
-      </div>
+        <Login />
     );
   }
 
