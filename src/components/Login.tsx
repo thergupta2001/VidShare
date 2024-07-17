@@ -1,15 +1,25 @@
 "use client"
 
 import { Card, CardFooter, Image, Button } from "@nextui-org/react";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function Login() {
+    const router = useRouter();
+    const { data : session, status } = useSession();
+
     const [isVisible, setIsVisible] = useState<boolean>(false);
 
     useEffect(() => {
         setIsVisible(true)
     }, [])
+
+    useEffect(() => {
+        if(status === "authenticated" && session?.user) {
+            router.replace("/home");
+        }
+    }, [status, session, router])
 
     return (
         <div className="flex flex-col justify-center items-center min-h-screen">
