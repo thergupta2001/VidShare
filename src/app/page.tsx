@@ -6,6 +6,7 @@ import { useSession, signIn, signOut } from "next-auth/react";
 import { useRecoilState } from "recoil";
 import { increaseAtom } from "./utils/store";
 import { useRouter } from "next/navigation";
+import { Button } from "@nextui-org/react";
 
 export default function Home() {
   const router = useRouter();
@@ -49,9 +50,9 @@ export default function Home() {
       <button onClick={() => { router.replace("/test") }}>
         Test Page
       </button>
-      {/* <button onClick={() => addUsers.mutate({ email })}>
-        Submit
-      </button> */}
+      <Button color="primary" variant="ghost">
+        Click Here
+      </Button>
     </div>
   );
 }
