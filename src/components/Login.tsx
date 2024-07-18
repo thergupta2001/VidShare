@@ -1,13 +1,14 @@
 "use client"
 
+import useAuth from "@/hooks/useAuth";
 import { Card, CardFooter, Image, Button } from "@nextui-org/react";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import Loading from "./Loading";
 
 export default function Login() {
-    const router = useRouter();
-    const { data : session, status } = useSession();
+    const { session, status } = useAuth();
 
     const [isVisible, setIsVisible] = useState<boolean>(false);
 
@@ -15,11 +16,9 @@ export default function Login() {
         setIsVisible(true)
     }, [])
 
-    useEffect(() => {
-        if(status === "authenticated" && session?.user) {
-            router.replace("/home");
-        }
-    }, [status, session, router])
+    if (status === "loading") {
+        return <Loading />
+    }
 
     return (
         <div className="flex flex-col justify-center items-center min-h-screen">
@@ -29,9 +28,8 @@ export default function Login() {
             <Card
                 isFooterBlurred
                 radius="lg"
-                className={`border-none w-full max-w-sm transition-all duration-2000 ease-bounce-in-out ${
-                    isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-                  }`}
+                className={`border-none w-full max-w-sm transition-all duration-2000 ease-bounce-in-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+                    }`}
             >
                 <div className="aspect-w-1 aspect-h-1 w-full">
                     <Image

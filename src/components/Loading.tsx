@@ -1,9 +1,11 @@
 import { Spinner } from "@nextui-org/react"
 
-export default function Loading () {
+export default function Loading() {
     return (
         <>
-            <Spinner />
+            <div className="flex items-center justify-center min-h-screen">
+                <Spinner size="lg" />
+            </div>
         </>
     )
 }
