@@ -50,6 +50,9 @@ const config: Config = {
               DEFAULT: "#FF6700",
             },
             focus: "#BEF264",
+            secondary: {
+              DEFAULT: "#171717"
+            },
           },
         },
       },

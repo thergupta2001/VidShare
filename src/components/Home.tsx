@@ -13,11 +13,11 @@ export default function Home() {
     }
 
     return (
-        <>
-            <p>Welcome to home page</p>
-            <Button onClick={() => signOut()}>
+        <div className="space-y-4">
+            <h1 className="text-2xl font-bold">Home</h1>
+            <Button onClick={() => signOut()} color="primary" variant="ghost">
                 Sign Out
             </Button>
-        </>
+        </div>
     )
 }
