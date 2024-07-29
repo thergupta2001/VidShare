@@ -55,6 +55,20 @@ export default function Sidebar() {
                     </li>
                     <li>
                         <Button
+                            as={Link}
+                            href="/upload"
+                            color={pathname === "/upload" ? "primary" : "default"}
+                            variant="shadow"
+                            className={`w-full flex items-center justify-center ${isCollapsed ? 'px-1' : 'justify-start px-3'}`}
+                            style={{ minWidth: 0 }}
+                        >
+                            <span className="truncate">
+                                {isCollapsed ? 'U' : 'Upload'}
+                            </span>
+                        </Button>
+                    </li>
+                    <li>
+                        <Button
                             color="primary"
                             variant="ghost"
                             className={`w-full flex items-center justify-center ${isCollapsed ? 'px-1' : 'justify-start px-3'} transition-colors`}
