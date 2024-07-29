@@ -17,8 +17,7 @@ export default function Sidebar() {
                 <Button
                     onClick={() => setIsCollapsed(!isCollapsed)}
                     size="sm"
-                    className="w-full flex items-center justify-center"
-                    style={{ minWidth: 0 }}
+                    className="w-full min-w-0 flex items-center justify-center"
                 >
                     {isCollapsed ? <FiChevronRight size={20} /> : <FiChevronLeft size={20} />}
                 </Button>
@@ -31,8 +30,7 @@ export default function Sidebar() {
                             href="/home"
                             color={pathname === "/home" ? "primary" : "default"}
                             variant="shadow"
-                            className={`w-full flex items-center justify-center ${isCollapsed ? 'px-1' : 'justify-start px-3'}`}
-                            style={{ minWidth: 0 }}
+                            className={`w-full min-w-0 flex items-center justify-center ${isCollapsed ? 'px-1' : 'justify-start px-3'}`}
                         >
                             <span className="truncate">
                                 {isCollapsed ? 'H' : 'Home'}
@@ -45,8 +43,7 @@ export default function Sidebar() {
                             href="/profile"
                             color={pathname === "/profile" ? "primary" : "default"}
                             variant="shadow"
-                            className={`w-full flex items-center justify-center ${isCollapsed ? 'px-1' : 'justify-start px-3'}`}
-                            style={{ minWidth: 0 }}
+                            className={`w-full min-w-0 flex items-center justify-center ${isCollapsed ? 'px-1' : 'justify-start px-3'}`}
                         >
                             <span className="truncate">
                                 {isCollapsed ? 'P' : 'Profile'}
@@ -59,8 +56,7 @@ export default function Sidebar() {
                             href="/upload"
                             color={pathname === "/upload" ? "primary" : "default"}
                             variant="shadow"
-                            className={`w-full flex items-center justify-center ${isCollapsed ? 'px-1' : 'justify-start px-3'}`}
-                            style={{ minWidth: 0 }}
+                            className={`w-full min-w-0 flex items-center justify-center ${isCollapsed ? 'px-1' : 'justify-start px-3'}`}
                         >
                             <span className="truncate">
                                 {isCollapsed ? 'U' : 'Upload'}
@@ -71,8 +67,7 @@ export default function Sidebar() {
                         <Button
                             color="primary"
                             variant="ghost"
-                            className={`w-full flex items-center justify-center ${isCollapsed ? 'px-1' : 'justify-start px-3'} transition-colors`}
-                            style={{ minWidth: 0 }}
+                            className={`w-full min-w-0 flex items-center justify-center ${isCollapsed ? 'px-1' : 'justify-start px-3'} transition-colors`}
                             onClick={() => { signOut() }}
                         >
                             <span className="truncate">
