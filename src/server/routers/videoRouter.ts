@@ -1,8 +1,6 @@
 import { z } from "zod";
 import { protectedProcedure, router } from "../trpc";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import prisma from "../../../prisma/db";
 import { TRPCError } from "@trpc/server";
 
 const s3Client = new S3Client({
@@ -16,45 +14,47 @@ const s3Client = new S3Client({
 export const videoRouter = router({
     uploadVideo: protectedProcedure
         .input(z.object({
-            title: z.string(),
-            file: z.object({
-                name: z.string(),
-                type: z.string(),
-                size: z.number(),
-            }),
+            name: z.string(),
+            type: z.string(),
+            size: z.number(),
+            base64: z.string()
         }))
-        .mutation(async ({ input, ctx }) => {
-            const { title, file } = input;
-            console.log(title, file)
-            const key = `videos/${Date.now()}-${file.name}`;
-
-            const command = new PutObjectCommand({
-                Bucket: process.env.AWS_S3_BUCKET_NAME,
-                Key: key,
-                ContentType: file.type,
-            });
-
-            try {
-                const signedUrl = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
-
-                // Log the signed URL
-                // console.log('Signed URL:', signedUrl);
-
-                const video = await prisma.video.create({
-                    data: {
-                        title,
-                        url: `https://${process.env.AWS_S3_BUCKET_NAME}.s3.amazonaws.com/${key}`,
-                        userId: ctx.session.user.id,
-                    },
-                });
-
-                return { signedUrl, video };
-            } catch (error) {
-                console.error('Error uploading video:', error);
+        .mutation(async ({ input }) => {
+            if (!input) {
                 throw new TRPCError({
-                    code: 'INTERNAL_SERVER_ERROR',
-                    message: 'Failed to upload video',
+                    code: "BAD_REQUEST",
+                    message: "No file provided"
+                })
+            }
+
+            if (input.size > 50 * 1024 * 1024) {
+                throw new TRPCError({
+                    code: 'BAD_REQUEST',
+                    message: 'File size exceeds 50MB limit',
                 });
             }
-        }),
-});
+
+            const filename = `${Date.now()} - ${input.name}`;
+            const fileBuffer = Buffer.from(input.base64, 'base64');
+
+            const params = {
+                Bucket: process.env.AWS_S3_BUCKET_NAME,
+                Key: filename,
+                Body: fileBuffer,
+                ContentType: input.type
+            }
+
+            try {
+                await s3Client.send(new PutObjectCommand(params));
+                const url = `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${filename}`;
+                return { url }
+            } catch (error) {
+                console.error("S3 upload error:", error);
+                throw new TRPCError({
+                    code: 'INTERNAL_SERVER_ERROR',
+                    message: 'Failed to upload file to S3',
+                });
+            }
+        })
+})
+
