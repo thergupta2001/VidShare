@@ -47,13 +47,9 @@ export const videoRouter = router({
             try {
                 await s3Client.send(new PutObjectCommand(params));
                 const url = `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${filename}`;
-                return { url }
+                return { successs: true }
             } catch (error) {
-                console.error("S3 upload error:", error);
-                throw new TRPCError({
-                    code: 'INTERNAL_SERVER_ERROR',
-                    message: 'Failed to upload file to S3',
-                });
+                throw new Error("Failed to upload file!");
             }
         })
 })

@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { trpc } from "@/server/client"
-import { httpBatchLink } from "@trpc/client"
+import { httpBatchLink, loggerLink } from "@trpc/client"
 import { SessionProvider } from "next-auth/react"
 import { RecoilRoot } from "recoil";
 import { NextUIProvider } from "@nextui-org/react"
@@ -14,12 +14,21 @@ export const Provider = ({ children }: { children: React.ReactNode }) => {
         () =>
             trpc.createClient({
                 links: [
+                    loggerLink({
+                        enabled: (opts) =>
+                            process.env.NODE_ENV === 'development' ||
+                            (opts.direction === 'down' && opts.result instanceof Error),
+                    }),
                     httpBatchLink({
                         url: "http://localhost:3000/api/trpc",
                     }),
                 ],
             })
     )
+
+    if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+        (window as any).trpc = trpc;
+    }
 
     return (
         <RecoilRoot>
