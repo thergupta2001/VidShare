@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { protectedProcedure, router } from "../trpc";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
-import { TRPCError } from "@trpc/server";
+import prisma from "../../../prisma/db";
 
 const s3Client = new S3Client({
     region: process.env.AWS_REGION,
@@ -17,21 +17,21 @@ export const videoRouter = router({
             name: z.string(),
             type: z.string(),
             size: z.number(),
-            base64: z.string()
+            base64: z.string(),
+            title: z.string(),
+            description: z.string(),
         }))
-        .mutation(async ({ input }) => {
+        .mutation(async ({ input, ctx }) => {
             if (!input) {
-                throw new TRPCError({
-                    code: "BAD_REQUEST",
-                    message: "No file provided"
-                })
+                throw new Error("No file provided!")
             }
 
             if (input.size > 50 * 1024 * 1024) {
-                throw new TRPCError({
-                    code: 'BAD_REQUEST',
-                    message: 'File size exceeds 50MB limit',
-                });
+                throw new Error("File size exceeds 50MB limit!");
+            }
+
+            if (!input.title || !input.description) {
+                throw new Error("Title and description are required!");
             }
 
             const filename = `${Date.now()} - ${input.name}`;
@@ -47,7 +47,17 @@ export const videoRouter = router({
             try {
                 await s3Client.send(new PutObjectCommand(params));
                 const url = `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${filename}`;
-                return { successs: true }
+
+                await prisma.video.create({
+                    data: {
+                        title: input.title,
+                        description: input.description,
+                        url: url,
+                        userId: ctx.session.user.id,
+                    }
+                })
+
+                return { success: true }
             } catch (error) {
                 throw new Error("Failed to upload file!");
             }

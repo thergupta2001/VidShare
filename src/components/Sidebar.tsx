@@ -5,19 +5,19 @@ import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { FiChevronLeft, FiChevronRight, FiHome, FiUser, FiUpload, FiLogOut } from "react-icons/fi";
 
 export default function Sidebar() {
     const pathname = usePathname();
     const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
 
     return (
-        <div className={`flex flex-col h-screen bg-secondary transition-all duration-300 ${isCollapsed ? 'w-16' : 'w-64'}`}>
+        <div className={`flex flex-col h-screen bg-secondary-900 transition-all duration-300 ${isCollapsed ? 'w-16' : 'w-64'}`}>
             <div className="p-2">
                 <Button
                     onClick={() => setIsCollapsed(!isCollapsed)}
                     size="sm"
-                    className="w-full min-w-0 flex items-center justify-center"
+                    className="w-full min-w-0 flex items-center justify-end bg-secondary"
                 >
                     {isCollapsed ? <FiChevronRight size={20} /> : <FiChevronLeft size={20} />}
                 </Button>
@@ -28,12 +28,14 @@ export default function Sidebar() {
                         <Button
                             as={Link}
                             href="/home"
-                            color={pathname === "/home" ? "primary" : "default"}
                             variant="shadow"
-                            className={`w-full min-w-0 flex items-center justify-center ${isCollapsed ? 'px-1' : 'justify-start px-3'}`}
+                            className={`w-full min-w-0 flex items-center justify-center ${pathname === "/home"
+                                ? 'bg-primary-400 text-primary-50'
+                                : 'bg-secondary-100 text-secondary-900'
+                                } ${isCollapsed ? 'px-1' : 'justify-start px-3'}`}
                         >
                             <span className="truncate">
-                                {isCollapsed ? 'H' : 'Home'}
+                                {isCollapsed ? <FiHome size={20} /> : <span className="truncate">Home</span>}
                             </span>
                         </Button>
                     </li>
@@ -41,12 +43,14 @@ export default function Sidebar() {
                         <Button
                             as={Link}
                             href="/profile"
-                            color={pathname === "/profile" ? "primary" : "default"}
                             variant="shadow"
-                            className={`w-full min-w-0 flex items-center justify-center ${isCollapsed ? 'px-1' : 'justify-start px-3'}`}
+                            className={`w-full min-w-0 flex items-center justify-center ${pathname === "/profile"
+                                ? 'bg-primary-400 text-primary-50'
+                                : 'bg-secondary-100 text-secondary-900'
+                                } ${isCollapsed ? 'px-1' : 'justify-start px-3'}`}
                         >
                             <span className="truncate">
-                                {isCollapsed ? 'P' : 'Profile'}
+                                {isCollapsed ? <FiUser size={20} /> : <span className="truncate">Profile</span>}
                             </span>
                         </Button>
                     </li>
@@ -54,12 +58,14 @@ export default function Sidebar() {
                         <Button
                             as={Link}
                             href="/upload"
-                            color={pathname === "/upload" ? "primary" : "default"}
                             variant="shadow"
-                            className={`w-full min-w-0 flex items-center justify-center ${isCollapsed ? 'px-1' : 'justify-start px-3'}`}
+                            className={`w-full min-w-0 flex items-center justify-center ${pathname === "/upload"
+                                ? 'bg-primary-400 text-primary-50'
+                                : 'bg-secondary-100 text-secondary-900'
+                                } ${isCollapsed ? 'px-1' : 'justify-start px-3'}`}
                         >
                             <span className="truncate">
-                                {isCollapsed ? 'U' : 'Upload'}
+                                {isCollapsed ? <FiUpload size={20} /> : <span className="truncate">Upload</span>}
                             </span>
                         </Button>
                     </li>
@@ -71,7 +77,7 @@ export default function Sidebar() {
                             onClick={() => { signOut() }}
                         >
                             <span className="truncate">
-                                {isCollapsed ? 'S' : 'Sign Out'}
+                                {isCollapsed ? <FiLogOut size={20} /> : <span className="truncate">Sign Out</span>}
                             </span>
                         </Button>
                     </li>

@@ -1,58 +1,125 @@
 "use client"
 
 import { trpc } from "@/server/client";
-import { Button } from "@nextui-org/react"
+import {
+    Button,
+    Card,
+    CardBody,
+    CardFooter,
+    CardHeader,
+    Input,
+    Modal,
+    ModalBody,
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+    Textarea
+} from "@nextui-org/react";
 import { useRef, useState } from "react"
 
 export default function Upload() {
 
     const fileInputRef = useRef<HTMLInputElement>(null);
-    const [error, setError] = useState<string | null>(null);
-    const [uploadedUrl, setUploadedUrl] = useState<string | null>(null);
+    const [message, setMessage] = useState<string | null>(null);
+    const [title, setTitle] = useState<string>("");
+    const [description, setDescription] = useState<string>("");
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const uploadVideo = trpc.video.uploadVideo.useMutation();
+    const uploadVideoMutation = trpc.video.uploadVideo.useMutation({
+        onError: (error) => {
+            setMessage(error.message);
+            setIsModalOpen(true);
+        },
+        onSuccess: (data) => {
+            setMessage("Video uploaded successfully!");
+            setIsModalOpen(true);
+        }
+    });
 
     async function handleUpload() {
         const file = fileInputRef?.current?.files?.[0];
-        setError(null);
-        setUploadedUrl(null);
+        setMessage(null);
 
         if (!file) {
-            setError("Please select a file first!")
+            setMessage("Please select a file first!")
             return;
         }
 
         if (file.size > 50 * 1024 * 1024) {
-            setError("File size should not be greater than 50mb!")
+            setMessage("File size should not be greater than 50mb!")
         }
 
         try {
-            // Converts the file to base64
             const arrayBuffer = await file.arrayBuffer();
             const base64 = btoa(
                 new Uint8Array(arrayBuffer).reduce((data, byte) => data + String.fromCharCode(byte), '')
             )
 
-            const response = await uploadVideo.mutateAsync({
-                name : file.name,
-                type : file.type,
-                size : file.size,
-                base64 : base64
+            await uploadVideoMutation.mutateAsync({
+                name: file.name,
+                type: file.type,
+                size: file.size,
+                base64: base64,
+                title: title,
+                description: description
             });
-            console.log("Upload successful:", response);
         } catch (error) {
-            console.error("Upload failed:", error);
-            setError("Upload failed. Please try again.");
+            setMessage("Upload failed. Please try again.");
         }
     }
 
     return (
-        <div>
-            <p>Upload Video (Max 50MB)</p>
-            <input type="file" ref={fileInputRef} accept="video/*" />
-            <Button onClick={handleUpload}>Upload</Button>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-            {uploadedUrl && <p>Video uploaded successfully. URL: {uploadedUrl}</p>}
-        </div>
+        <>
+            <Card className="max-w-lg mx-auto mt-10">
+                <CardHeader className="flex gap-3">
+                    <div className="flex flex-col">
+                        <p className="text-2xl">Upload Video</p>
+                        <p className="text-small text-default-500">File size should be lesser than 50MB</p>
+                    </div>
+                </CardHeader>
+
+                <CardBody>
+                    <Input
+                        label="Video Title"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                        className="mb-4"
+                    />
+                    <Textarea
+                        label="Video Description"
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        className="mb-4"
+                    />
+                    <input
+                        type="file"
+                        ref={fileInputRef}
+                        accept="video/*"
+                        className="mb-4 w-full p-2 border border-secondary-300 rounded"
+                    />
+                </CardBody>
+                <CardFooter>
+                    <Button
+                        onClick={handleUpload}
+                        color="primary"
+                        variant="ghost"
+                        className="w-full"
+                        disabled={uploadVideoMutation.isPending}
+                    >
+                        {uploadVideoMutation.isPending ? "Uploading..." : "Upload"}
+                    </Button>
+                </CardFooter>
+            </Card>
+
+            <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} className="bg-gray-800">
+                <ModalContent>
+                    <ModalHeader className="text-white">Upload Status</ModalHeader>
+                    <ModalBody className="text-white">{message}</ModalBody>
+                    <ModalFooter>
+                        <Button onClick={() => setIsModalOpen(false)}>Close</Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+        </>
     )
 }
