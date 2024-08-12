@@ -5,7 +5,7 @@ import { Button } from "@nextui-org/react";
 import { signOut } from "next-auth/react";
 import Loading from "./Loading";
 
-export default function Home() {
+export default function HomeComponent () {
     const { session, status } = useAuth();
 
     if (status === "loading") {

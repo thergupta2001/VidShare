@@ -1,6 +1,7 @@
 "use client"
 
 import Loading from "@/components/Loading";
+import ProfileComponent from "@/components/Profile";
 import Sidebar from "@/components/Sidebar";
 import useAuth from "@/hooks/useAuth";
 
@@ -14,9 +15,9 @@ export default function Profile () {
     return (
         <div className="flex">
             <Sidebar />
-            <main className="flex-1 p-4 overflow-auto">
-                Profile
-            </main>
+            <div className="flex-1 overflow-auto">
+                <ProfileComponent />
+            </div>
         </div>
     )
 }

@@ -30,7 +30,7 @@ export default function Upload() {
             setMessage(error.message);
             setIsModalOpen(true);
         },
-        onSuccess: (data) => {
+        onSuccess: () => {
             setMessage("Video uploaded successfully!");
             setIsModalOpen(true);
         }
