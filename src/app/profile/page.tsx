@@ -13,9 +13,9 @@ export default function Profile () {
     }
 
     return (
-        <div className="flex">
+        <div className="flex h-screen">
             <Sidebar />
-            <div className="flex-1 overflow-auto">
+            <div className="flex-1 overflow-y-auto">
                 <ProfileComponent />
             </div>
         </div>

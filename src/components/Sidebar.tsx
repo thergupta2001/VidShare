@@ -12,7 +12,7 @@ export default function Sidebar() {
     const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
 
     return (
-        <div className={`flex flex-col h-screen bg-secondary-900 transition-all duration-300 ${isCollapsed ? 'w-16' : 'w-64'}`}>
+        <div className={`flex flex-col h-screen flex-shrink-0 transition-all duration-300 ${isCollapsed ? 'w-16' : 'w-64'}`}>
             <div className="p-2">
                 <Button
                     onClick={() => setIsCollapsed(!isCollapsed)}

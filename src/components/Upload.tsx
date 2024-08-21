@@ -1,5 +1,6 @@
 "use client"
 
+import useAuth from "@/hooks/useAuth";
 import { trpc } from "@/server/client";
 import {
     Button,
@@ -16,8 +17,10 @@ import {
     Textarea
 } from "@nextui-org/react";
 import { useRef, useState } from "react"
+import Loading from "./Loading";
 
 export default function Upload() {
+    const { status } = useAuth();
 
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [message, setMessage] = useState<string | null>(null);
@@ -35,6 +38,10 @@ export default function Upload() {
             setIsModalOpen(true);
         }
     });
+
+    if (status === "loading") {
+        return <Loading />
+    }
 
     async function handleUpload() {
         const file = fileInputRef?.current?.files?.[0];

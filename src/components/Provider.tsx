@@ -33,7 +33,7 @@ export const Provider = ({ children }: { children: React.ReactNode }) => {
     return (
         <RecoilRoot>
             <NextUIProvider>
-                <main className="dark text-foreground bg-background h-screen">
+                <main className="dark text-foreground bg-background h-[100%]">
                     <SessionProvider>
                         <trpc.Provider client={trpcClient} queryClient={queryClient}>
                             <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>

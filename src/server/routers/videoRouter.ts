@@ -61,6 +61,53 @@ export const videoRouter = router({
             } catch (error) {
                 throw new Error("Failed to upload file!");
             }
+        }),
+
+    getVideos: protectedProcedure
+        .input(z.object({
+            limit: z.number().min(1).max(100).default(3),
+            cursor: z.string().optional(),
+        }))
+        .query(async ({ input }) => {
+            const { limit, cursor } = input;
+
+            const videos = await prisma.video.findMany({
+                take: limit,
+                where: cursor ? {
+                    id: {
+                        lt: cursor,
+                    },
+                } : undefined,
+                orderBy: {
+                    createdAt: "desc",
+                },
+                include: {
+                    user: {
+                        select: {
+                            id: true,
+                            name: true,
+                            image: true,
+                        },
+                    },
+                },
+            });
+
+            const nextVideo = await prisma.video.findMany({
+                take: 1,
+                where: {
+                    id: {
+                        lt: videos[videos.length - 1]?.id,
+                    },
+                },
+                orderBy: {
+                    createdAt: "desc",
+                },
+            });
+
+            return {
+                videos, 
+                nextCursor: nextVideo.length > 0 ? videos[videos.length - 1]?.id : undefined,
+            }
         })
 })
 

@@ -18,7 +18,8 @@ export default function useAuth () {
                 }
             } catch (error) {
                 console.error(error);
-                alert("Unauthorized User")
+                router.replace("/")
+                alert("Internal Server Error");
             }
         }
 
