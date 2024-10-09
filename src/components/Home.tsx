@@ -6,6 +6,7 @@ import { signOut } from "next-auth/react";
 import Loading from "./Loading";
 import { trpc } from "@/server/client";
 import { useEffect, useRef } from "react";
+import PageLoading from "./PageLoad";
 
 export default function HomeComponent() {
     const { status } = useAuth();
@@ -60,23 +61,27 @@ export default function HomeComponent() {
                 Sign Out
             </Button>
 
-            <div className="space-y-4">
+            <div className="flex flex-col items-center w-full -mt-1">
                 {data?.pages.map((page, i) => (
-                    <div key={i}>
+                    <div key={i} className="w-1/2">
                         {page.videos.map((video) => (
-                            <div key={video.id} className="border p-4 rounded-md my-20">
-                                <h2 className="text-xl font-semibold">{video.title}</h2>
-                                <p>{video.description}</p>
-                                <a href={video.url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
-                                    Watch Video
-                                </a>
+                            <div key={video.id} className="border p-4 rounded-md my-4 flex flex-col items-center">
+                                <h2 className="text-xl font-semibold whitespace-nowrap">{video.title}</h2>
+                                <p className="whitespace-nowrap">{video.description}</p>
+                                <video
+                                    src={video.url}
+                                    controls
+                                    className="w-full mt-2"
+                                >
+                                    Your browser does not support the video tag.
+                                </video>
                             </div>
                         ))}
                     </div>
                 ))}
             </div>
 
-            {isFetchingNextPage && <Loading />}
+            {isFetchingNextPage && <PageLoading />}
             <div ref={observerTarget} />
 
             {!hasNextPage && <p>No more videos to load.</p>}
